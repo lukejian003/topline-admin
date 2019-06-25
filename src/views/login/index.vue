@@ -17,6 +17,13 @@
               <el-button @click="handleSendCode">发送验证码</el-button>
             </el-col>
           </el-form-item>
+          <el-form-item prop="agree">
+            <el-checkbox v-model="form.agree">
+              我已阅读并同意
+              <el-link type="primary">用户协议</el-link>和
+              <el-link type="primary">隐私条款</el-link>
+            </el-checkbox>
+          </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="handleLogin" id="dl" :loading="loginLoading">登录</el-button>
           </el-form-item>
@@ -35,7 +42,8 @@ export default {
     return {
       form: {
         mobile: '17777318254',
-        code: ''
+        code: '',
+        agree: ''
       },
       rules: {
         mobile: [
@@ -45,6 +53,10 @@ export default {
         code: [
           { required: true, message: '请输入验证码', trigger: 'blur' },
           { min: 6, max: 6, message: '长度 6 个字符', trigger: 'blur' }
+        ],
+        agree: [
+          { required: true, message: '请同意服务条款', trigger: 'change' },
+          { pattern: /true/, message: '请同意服务条款', trigger: 'change' }
         ]
       },
       captchaObj: null,
@@ -66,32 +78,43 @@ export default {
         method: 'POST',
         url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
         data: this.form
-      }).then(res => {
-        console.log(res)
-        this.$message({
-          message: '牛逼，登录成功！',
-          type: 'success'
-        })
-        this.loginLoading = false
-        this.$router.push({
-          name: 'home'
-        })
-      }).catch(err => {
-        this.loginLoading = false
-        const status = err.response.status
-        if (status === 400) {
-          this.$message.error('卧槽，手机号和验证码错了吧!')
-        } else if (status === 403) {
-          this.$message.error('卧槽，无权限登录!')
-        } else if (status === 507) { this.$message.error('GG，服务器数据库异常!') }
       })
+        .then(res => {
+          console.log(res)
+          this.$message({
+            message: '牛逼，登录成功！',
+            type: 'success'
+          })
+          this.loginLoading = false
+          this.$router.push({
+            name: 'home'
+          })
+        })
+        .catch(err => {
+          this.loginLoading = false
+          const status = err.response.status
+          if (status === 400) {
+            this.$message.error('卧槽，手机号和验证码错了吧!')
+          } else if (status === 403) {
+            this.$message.error('卧槽，无权限登录!')
+          } else if (status === 507) {
+            this.$message.error('GG，服务器数据库异常!')
+          }
+        })
     },
     handleSendCode () {
+      this.$resf['ruleForm'].validateField('mobile', errorMessage => {
+        if (errorMessage.trim().lenght > 0) {
+
+        }
+      })
+      this.showGeetest()
+    },
+    showGeetest () {
       const { mobile } = this.form
       if (this.captchaObj) {
         return this.captchaObj.verify()
       }
-
       axios({
         method: 'GET',
         url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
