@@ -14,7 +14,7 @@
               <el-input v-model="form.code" placeholder="验证码"></el-input>
             </el-col>
             <el-col :span="6" :offset="1">
-              <el-button @click="handleSendCode">发送验证码</el-button>
+              <el-button @click="handleSendCode" :disabled="!!codeTimer">{{codeTimer?`剩余 ${codeSecons} 秒`:'发送验证码'}}</el-button>
             </el-col>
           </el-form-item>
           <el-form-item prop="agree">
@@ -60,7 +60,10 @@ export default {
         ]
       },
       captchaObj: null,
-      loginLoading: false
+      loginLoading: false,
+      codeSecons: 60,
+      codeTimer: null,
+      sendMobile: ''
     }
   },
   methods: {
@@ -103,18 +106,25 @@ export default {
         })
     },
     handleSendCode () {
-      this.$resf['ruleForm'].validateField('mobile', errorMessage => {
+      this.$refs['ruleForm'].validateField('mobile', errorMessage => {
         if (errorMessage.trim().lenght > 0) {
 
         }
       })
-      this.showGeetest()
+
+      if (this.captchaObj) {
+        if (this.form.mobile !== this.sendMobile) {
+          this.showGeetest()
+        } else {
+          return this.captchaObj.verify()
+        }
+      } else {
+        this.showGeetest()
+      }
     },
     showGeetest () {
       const { mobile } = this.form
-      if (this.captchaObj) {
-        return this.captchaObj.verify()
-      }
+
       axios({
         method: 'GET',
         url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
@@ -134,14 +144,15 @@ export default {
             // 这里可以调用验证实例 captchaObj 的实例方法
 
             captchaObj
-              .onReady(function () {
+              .onReady(() => {
                 // 验证码ready之后才能调用verify方法显示验证码
-                console.log('验证码ready之后才能调用verify方法显示验证码')
+                // console.log('验证码ready之后才能调用verify方法显示验证码')
+                this.sendMobile = this.form.mobile
                 captchaObj.verify()
               })
-              .onSuccess(function () {
+              .onSuccess(() => {
                 // your code
-                console.log(captchaObj.getValidate())
+                // console.log(captchaObj.getValidate())
                 const {
                   geetest_challenge: challenge,
                   geetest_seccode: seccode,
@@ -158,6 +169,7 @@ export default {
                 }).then(res => {
                   console.log(res)
                   // 倒计时在这里
+                  this.codeCounDown()
                 })
               })
               .onError(function () {
@@ -167,7 +179,20 @@ export default {
           }
         )
       })
+    },
+    codeCounDown () {
+      console.log('倒计时开始')
+      this.codeTimer = window.setInterval(() => {
+        this.codeSecons--
+        if (this.codeSecons <= 0) {
+          this.codeSecons = 10
+          window.clearInterval(this.codeTimer)
+          // console.log(this.codeTimer)
+          this.codeTimer = null
+        }
+      }, 1000)
     }
+
   }
 }
 </script>
