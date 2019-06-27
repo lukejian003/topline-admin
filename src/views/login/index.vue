@@ -14,14 +14,11 @@
               <el-input v-model="form.code" placeholder="验证码"></el-input>
             </el-col>
             <el-col :span="6" :offset="1">
-              <el-button @click="handleSendCode" :disabled="!!codeTimer">{{codeTimer?`剩余 ${codeSecons} 秒`:'发送验证码'}}</el-button>
+              <el-button @click="handleSendCode" :disabled="!!codeTimer||codeLoading">{{codeTimer?`剩余 ${codeSecons} 秒`:'发送验证码'}}</el-button>
             </el-col>
           </el-form-item>
           <el-form-item prop="agree">
-            <el-checkbox v-model="form.agree">
-              我已阅读并同意
-              <el-link type="primary">用户协议</el-link>和
-              <el-link type="primary">隐私条款</el-link>
+            <el-checkbox v-model="form.agree">我已阅读并同意<el-link type="primary">用户协议</el-link>和<el-link type="primary">隐私条款</el-link>
             </el-checkbox>
           </el-form-item>
           <el-form-item>
@@ -34,7 +31,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+
 import '@/vendor/gt.js'
 export default {
   name: 'AppLogin',
@@ -42,8 +39,8 @@ export default {
     return {
       form: {
         mobile: '17777318254',
-        code: '',
-        agree: ''
+        code: '246810',
+        agree: true
       },
       rules: {
         mobile: [
@@ -63,7 +60,8 @@ export default {
       loginLoading: false,
       codeSecons: 60,
       codeTimer: null,
-      sendMobile: ''
+      sendMobile: '',
+      codeLoading: false
     }
   },
   methods: {
@@ -77,13 +75,14 @@ export default {
     },
     login () {
       this.loginLoading = true
-      axios({
+      this.$http({
         method: 'POST',
-        url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
+        url: '/authorizations',
         data: this.form
       })
         .then(res => {
-          console.log(res)
+          // console.log(res)
+          window.localStorage.setItem('use_info', JSON.stringify(res.data.data))
           this.$message({
             message: '牛逼，登录成功！',
             type: 'success'
@@ -123,11 +122,12 @@ export default {
       }
     },
     showGeetest () {
+      this.codeLoading = true
       const { mobile } = this.form
 
-      axios({
+      this.$http({
         method: 'GET',
-        url: `http://ttapi.research.itcast.cn/mp/v1_0/captchas/${mobile}`
+        url: `/captchas/${mobile}`
       }).then(res => {
         const data = res.data.data
         window.initGeetest(
@@ -147,6 +147,7 @@ export default {
               .onReady(() => {
                 // 验证码ready之后才能调用verify方法显示验证码
                 // console.log('验证码ready之后才能调用verify方法显示验证码')
+                this.codeLoading = false
                 this.sendMobile = this.form.mobile
                 captchaObj.verify()
               })
@@ -158,16 +159,16 @@ export default {
                   geetest_seccode: seccode,
                   geetest_validate: validate
                 } = captchaObj.getValidate()
-                axios({
+                this.$http({
                   method: 'GET',
-                  url: `http://ttapi.research.itcast.cn/mp/v1_0/sms/codes/${mobile}`,
+                  url: `/sms/codes/${mobile}`,
                   params: {
                     challenge,
                     seccode,
                     validate
                   }
                 }).then(res => {
-                  console.log(res)
+                  // console.log(res)
                   // 倒计时在这里
                   this.codeCounDown()
                 })
