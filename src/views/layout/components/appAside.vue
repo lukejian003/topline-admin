@@ -18,7 +18,7 @@
       <span slot="title">首页</span>
     </el-menu-item>
 
-    <el-submenu index="">
+    <el-submenu index="1">
       <template slot="title">
         <i class="el-icon-s-order"></i>
         <span>内容</span>
@@ -28,29 +28,29 @@
           <i class="el-icon-edit"></i>
           <span>发布</span>
         </el-menu-item>
-        <el-menu-item index>
+        <el-menu-item index="/article">
           <i class="el-icon-document"></i>
           <span>内容列表</span>
         </el-menu-item>
       </el-menu-item-group>
     </el-submenu>
 
-    <el-menu-item index="3">
+    <el-menu-item index="/comment">
       <i class="el-icon-s-comment"></i>
       <span slot="title">评论</span>
     </el-menu-item>
 
-    <el-menu-item index="4">
+    <el-menu-item index="/image">
       <i class="el-icon-picture"></i>
       <span slot="title">素材</span>
     </el-menu-item>
 
-    <el-menu-item index="5">
+    <el-menu-item index="/fans">
       <i class="el-icon-s-promotion"></i>
       <span slot="title">粉丝</span>
     </el-menu-item>
 
-    <el-menu-item index="6">
+    <el-menu-item index="/account">
       <i class="el-icon-s-custom"></i>
       <span slot="title">账户</span>
     </el-menu-item>
@@ -79,7 +79,7 @@ export default {
   background-color: rgb(67, 74, 80);
   img {
     padding: 15px;
-    width: 60%;
+    width: 80%;
   }
 }
 

@@ -31,14 +31,14 @@ export default {
     height: 100%;
     .el-aside{
         height: 100%;
-        background-color: rgb(107, 59, 59);
+
     }
     .el-header{
         height: 100%;
     }
     .el-main{
         height: 100%;
-        background-color: rgb(107, 98, 47);
+        background-color: rgb(228, 228, 228);
     }
 
 }

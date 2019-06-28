@@ -80,9 +80,9 @@ export default {
         url: '/authorizations',
         data: this.form
       })
-        .then(res => {
+        .then(data => {
           // console.log(res)
-          window.localStorage.setItem('use_info', JSON.stringify(res.data.data))
+          window.localStorage.setItem('user_info', JSON.stringify(data))
           this.$message({
             message: '牛逼，登录成功！',
             type: 'success'
@@ -94,6 +94,8 @@ export default {
         })
         .catch(err => {
           this.loginLoading = false
+          // console.log(err)
+          // console.log(status)
           const status = err.response.status
           if (status === 400) {
             this.$message.error('卧槽，手机号和验证码错了吧!')
@@ -128,8 +130,7 @@ export default {
       this.$http({
         method: 'GET',
         url: `/captchas/${mobile}`
-      }).then(res => {
-        const data = res.data.data
+      }).then(data => {
         window.initGeetest(
           {
             // 以下配置参数来自服务端 SDK
@@ -167,7 +168,7 @@ export default {
                     seccode,
                     validate
                   }
-                }).then(res => {
+                }).then(data => {
                   // console.log(res)
                   // 倒计时在这里
                   this.codeCounDown()
@@ -205,8 +206,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url(./login_bg.jpg) repeat 0, 0;
-  background-size: 100%;
+  background: url(./login_bg1.jpeg) repeat;
+  background-size: 50%;
   .login-from-warp {
     padding: 50px;
     background-color: #fff;

@@ -7,8 +7,9 @@
       <div class="grid-content bg-purple">
         <el-dropdown>
           <span class="el-dropdown-link">
+            <!-- <img class="tx" :src="userInfo.photo" alt="头像"> -->
             <img class="tx" src="https://i02piccdn.sogoucdn.com/730a5f7e1b989302" alt="头像">
-            17777318254
+            {{userInfo.name}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -30,7 +31,7 @@ export default {
   },
   created () {
     this.userInfo = JSON.parse(window.localStorage.getItem('user_info'))
-    console.log(this.userInfo)
+    // console.log(this.userInfo)
   }
 }
 </script>
