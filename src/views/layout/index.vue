@@ -35,6 +35,7 @@ export default {
     }
     .el-header{
         height: 100%;
+        border-bottom: 1px solid rgb(233, 233, 233);
     }
     .el-main{
         height: 100%;

@@ -24,6 +24,7 @@
 
 <script>
 export default {
+  name: 'appHeader',
   data () {
     return {
       userInfo: {}
@@ -57,5 +58,6 @@ export default {
   height: 60px;
   display: flex;
   align-items: center;
+  box-shadow: black;
 }
 </style>

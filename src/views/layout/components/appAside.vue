@@ -59,6 +59,7 @@
 
 <script>
 export default {
+  name: 'appAside',
   data () {
     return {}
   },
